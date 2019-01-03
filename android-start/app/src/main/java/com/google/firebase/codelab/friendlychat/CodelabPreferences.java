@@ -18,5 +18,7 @@ package com.google.firebase.codelab.friendlychat;
 public class CodelabPreferences {
 
     public static final String FRIENDLY_MSG_LENGTH = "friendly_msg_length";
+    public static final String FRIENDLY_BUTTON_COLOR = "friendly_button_color";
+    public static final String MESSAGE_SENT_EVENT = "message_sent";
 
 }
