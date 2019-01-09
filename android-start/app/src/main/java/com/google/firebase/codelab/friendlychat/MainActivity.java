@@ -17,6 +17,8 @@ package com.google.firebase.codelab.friendlychat;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -78,7 +80,7 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.google.firebase.codelab.friendlychat.CodelabPreferences.FRIENDLY_BUTTON_COLOR;
+import static com.google.firebase.codelab.friendlychat.CodelabPreferences.FRIENDLY_ACTIONBAR_COLOR;
 import static com.google.firebase.codelab.friendlychat.CodelabPreferences.FRIENDLY_MSG_LENGTH;
 import static com.google.firebase.codelab.friendlychat.CodelabPreferences.MESSAGE_SENT_EVENT;
 
@@ -108,6 +110,12 @@ public class MainActivity extends AppCompatActivity
     public static final int DEFAULT_MSG_LENGTH_LIMIT = 10;
     public static final String ANONYMOUS = "anonymous";
 
+
+    private static final Map<String, Integer> colorMap = new HashMap<>();
+    static {
+        colorMap.put("ORANGE",new Integer(0xFFFF9800));
+        colorMap.put("BLUE", Color.BLUE);
+    }
     private String mUsername;
     private String mPhotoUrl;
     private SharedPreferences mSharedPreferences;
@@ -179,7 +187,7 @@ public class MainActivity extends AppCompatActivity
         // available. Eg: if an error occurred fetching values from the server.
         Map<String, Object> defaultConfigMap = new HashMap<>();
         defaultConfigMap.put(FRIENDLY_MSG_LENGTH, 10L);
-        defaultConfigMap.put(FRIENDLY_BUTTON_COLOR, 0xFF2E7D32);
+        defaultConfigMap.put(FRIENDLY_ACTIONBAR_COLOR, "ORANGE");
 
         //RED = 4294901760
         //GREEN = 4281236786
@@ -317,9 +325,6 @@ public class MainActivity extends AppCompatActivity
         });
 
         mSendButton = (Button) findViewById(R.id.sendButton);
-        Long buttonColor =
-                mFirebaseRemoteConfig.getLong("friendly_button_color");
-        mSendButton.setBackgroundColor(buttonColor.intValue());
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -485,7 +490,7 @@ public class MainActivity extends AppCompatActivity
                         if (task.isSuccessful()) {
                             FriendlyMessage friendlyMessage =
                                     new FriendlyMessage(null, mUsername, mPhotoUrl,
-                                            task.getResult().getMetadata().getDownloadUrl()
+                                            task.getResult().getStorage().getDownloadUrl()
                                                     .toString());
                             mFirebaseDatabaseReference.child(MESSAGES_CHILD).child(key)
                                     .setValue(friendlyMessage);
@@ -543,11 +548,10 @@ public class MainActivity extends AppCompatActivity
                         mFirebaseRemoteConfig.activateFetched();
                         applyRetrievedLengthLimit();
 
-                        if(mSendButton != null) {
-                            Long buttonColor =
-                                    mFirebaseRemoteConfig.getLong("friendly_button_color");
-                            mSendButton.setBackgroundColor(buttonColor.intValue());
-                        }
+                        String actionBarColor =
+                                mFirebaseRemoteConfig.getString("friendly_actionbar_color").toUpperCase();
+                        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colorMap.get(actionBarColor)));
+
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
