@@ -110,6 +110,8 @@ public class MainActivity extends AppCompatActivity
     public static final int DEFAULT_MSG_LENGTH_LIMIT = 10;
     public static final String ANONYMOUS = "anonymous";
 
+    //simple counter of messages sent for demo purposes - of course you would need a better solution for a real product.
+    private static int msgSendCountForSession = 1;
 
     private static final Map<String, Integer> colorMap = new HashMap<>();
     static {
@@ -343,6 +345,14 @@ public class MainActivity extends AppCompatActivity
                 payload.putString(FirebaseAnalytics.Param.VALUE, "sent");
                 mFirebaseAnalytics.logEvent(MESSAGE_SENT_EVENT,
                         payload);
+
+                if (msgSendCountForSession >0 && msgSendCountForSession % 5 == 0) {
+                    mFirebaseAnalytics.setUserProperty("user_level", "BRONZE");
+                    mFirebaseAnalytics.logEvent("user_level_unlocked", null);
+
+                }
+                msgSendCountForSession++;
+
             }
         });
 
@@ -404,6 +414,8 @@ public class MainActivity extends AppCompatActivity
                 return true;
             case R.id.fresh_config_menu:
                 fetchConfig();
+                msgSendCountForSession=0;
+                mFirebaseAnalytics.setUserProperty("user_level", "NOVICE");
                 return true;
             case R.id.sign_out_menu:
                 mFirebaseAuth.signOut();

@@ -15,3 +15,12 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+
+############ Crashlytics ################################
+-keepattributes *Annotation*
+-keep class com.crashlytics.** { *; }
+-dontwarn com.crashlytics.**
+-keepattributes SourceFile,LineNumberTable
+-keep class com.google.android.gms.measurement.AppMeasurement { *; }
+-keep class com.google.android.gms.measurement.AppMeasurement$OnEventListener { *; }
